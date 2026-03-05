@@ -1,22 +1,60 @@
- # Environment variables
+# =========================
+# Environment variables
+# =========================
 .env
+.env.*
 
-# Python cache
+# =========================
+# Python
+# =========================
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.py[cod]
 
-# Database
+# Virtual environments
+venv/
+env/
+.venv/
+
+# =========================
+# Django
+# =========================
 db.sqlite3
+staticfiles/
+media/
 
+# =========================
 # Logs
+# =========================
 *.log
 out*
 error.txt
 
-# Node
+# =========================
+# Node / Frontend
+# =========================
 node_modules/
 .next/
+dist/
+build/
 
-# OS files
+# =========================
+# OS / System files
+# =========================
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Misc
+# =========================
+*.swp
+*.swo
