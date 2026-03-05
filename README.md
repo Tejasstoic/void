@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # VOID – Governance-First Anonymous Social Platform
 
 VOID is a production-ready, industry-standard, scalable anonymous social media platform focused on public anonymity, internal accountability, and transparent AI-assisted governance.
@@ -83,3 +84,8 @@ npm run dev
 ## 📝 License
 
 Proprietary. Built for Tejasstoic.
+=======
+# void-platform
+Governance-first anonymous social platform with age-tiered access.
+"# void" 
+>>>>>>> a4a70b6cc17c67a3419a4ccad7e272860a377b88
