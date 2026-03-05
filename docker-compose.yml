@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:15-alpine
@@ -5,48 +7,46 @@ services:
       - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=void_db
-      - POSTGRES_USER=void_user
-      - POSTGRES_PASSWORD=void_pass
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
 
   backend:
     build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
     environment:
+      - DATABASE_URL=postgres://user:password@db:5432/void_db
+      - CELERY_BROKER_URL=redis://redis:6379/1
       - DEBUG=True
-      - SECRET_KEY=django-insecure-dev-key
-      - DATABASE_URL=postgres://void_user:void_pass@db:5432/void_db
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       - db
       - redis
 
-  celery_worker:
+  celery:
     build: ./backend
-    command: celery -a core worker -l info
+    command: celery -A core worker -l info
     volumes:
       - ./backend:/app
     environment:
-      - DATABASE_URL=postgres://void_user:void_pass@db:5432/void_db
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DATABASE_URL=postgres://user:password@db:5432/void_db
+      - CELERY_BROKER_URL=redis://redis:6379/1
     depends_on:
       - db
       - redis
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000/api
     ports:
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
     depends_on:
       - backend
 

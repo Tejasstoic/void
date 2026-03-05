@@ -14,4 +14,11 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/content/', include('content.urls')),
     path('api/governance/', include('governance.urls')),
+    
+    # Phase 2: Engagement endpoints
+    path('api/engagement/', include('engagement.urls')),
+    path('api/ranking/', include('ranking.urls')),
+    path('api/trending/', include('trending.urls')),
+    path('api/reputation/', include('reputation.urls')),
+    path('api/notifications/', include('notifications.urls')),
 ]

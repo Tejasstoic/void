@@ -1,0 +1,21 @@
+{
+  "name": "VOID",
+  "short_name": "VOID",
+  "description": "Anonymous Governance-First Social Protocol",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#9D5CFF",
+  "icons": [
+    {
+      "src": "/branding/logo_exclusive.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/branding/logo_exclusive.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

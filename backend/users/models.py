@@ -10,6 +10,10 @@ class UserManager(BaseUserManager):
         if not date_of_birth:
             raise ValueError('Users must have a date of birth')
             
+        if not extra_fields.get('alias'):
+             import random
+             extra_fields['alias'] = f"anon-{random.randint(1000, 9999)}"
+
         user = self.model(
             email=self.normalize_email(email),
             date_of_birth=date_of_birth,
@@ -52,6 +56,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_suspended = models.BooleanField(default=False)
     suspension_end = models.DateTimeField(null=True, blank=True)
+    
+    # Engagement tracking
+    restricted_zone_visits = models.IntegerField(default=0)
+    last_active_at = models.DateTimeField(null=True, blank=True)
+    daily_active_minutes = models.IntegerField(default=0)
     
     # Audit
     created_at = models.DateTimeField(auto_now_add=True)

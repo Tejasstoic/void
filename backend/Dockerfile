@@ -1,4 +1,4 @@
-# Production build for Django backend
+# Use official Python runtime as a parent image
 FROM python:3.11-slim
 
 # Set environment variables
@@ -10,20 +10,20 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    postgresql-client \
     libpq-dev \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project
-COPY . .
+COPY . /app/
 
 # Expose port
 EXPOSE 8000
 
-# Run entrypoint script
+# Run entrypoint script or direct command
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

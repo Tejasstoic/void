@@ -30,3 +30,13 @@ class MeView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+from rest_framework.permissions import IsAdminUser
+
+class UserListView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        users = User.objects.all().order_by('-created_at')
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)

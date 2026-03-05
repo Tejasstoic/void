@@ -1,65 +1,85 @@
-# VOID - Anonymous Social Platform
+# VOID – Governance-First Anonymous Social Platform
 
-VOID is a governance-first anonymous social platform with AI moderation, age-tiered content layers, and an admin dashboard.
+VOID is a production-ready, industry-standard, scalable anonymous social media platform focused on public anonymity, internal accountability, and transparent AI-assisted governance.
 
-## Tech Stack
-- **Backend**: Django 5, DRF, Celery, Redis, PostgreSQL
-- **Frontend**: Next.js 14, Tailwind CSS, Zustand, React Query
-- **Infrastructure**: Docker & Docker Compose
+## 🚀 Features
 
-## Quick Start (Local Run)
+- **Anonymous Interaction**: Public anonymity with randomized aliases.
+- **Internal Accountability**: Strike-based governance system for community safety.
+- **Age-Tiered Content**: SAFE (General) and MATURE (Restricted Zone) content layers.
+- **AI-Assisted Moderation**: Automated classification of pulses (SAFE, MATURE, PROHIBITED).
+- **Admin Dashboard**: Real-time analytics, moderation queue, and user strike management.
+- **Social Features**: Reactions (Hearts), Nested Comments, Bookmarks, and Shareable Links.
+- **Premium UI**: High-end dark-first design with Glassmorphism and smooth animations.
 
-Since Docker is not available in this environment, follow these steps to run the platform locally:
+## 🏗️ Architecture
 
-### 1. Backend (Django)
+- **Backend**: Django 5+, DRF, PostgreSQL, Celery, Redis, SimpleJWT.
+- **Frontend**: Next.js 14+ (App Router), TypeScript, Tailwind CSS, Zustand, React Query, Framer Motion.
+- **Deployment**: Dockerized services for horizontal scaling.
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Docker & Docker Compose
+- Node.js 18+ (for local development)
+- Python 3.11+ (for local development)
+
+### Quick Start with Docker
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Tejasstoic/void-platform.git
+   cd void-platform
+   ```
+
+2. Generate environment configuration:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your specific secrets
+   ```
+
+3. Build and launch the platform:
+   ```bash
+   docker-compose up --build
+   ```
+
+4. The platform will be available at:
+   - Frontend: `http://localhost:3000`
+   - Backend API: `http://localhost:8000/api`
+
+### Local Development Setup
+
+#### Backend
 ```bash
 cd backend
-python -m venv venv
-.\venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
 
-### 2. Frontend (Next.js)
+#### Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### 🔐 Admin Credentials
-- **Email**: `admin@void.com`
-- **Password**: `admin123`
+## ⚖️ Governance Model
 
-- **Backend API**: http://localhost:8000/api/
-- **Frontend App**: http://localhost:3000/
-- **Admin Panel**: http://localhost:8000/admin/
-- **Redis**: localhost:6379
+- **SAFE**: Default view. Content verified as non-toxic.
+- **MATURE**: Restricted Zone (18+). Content with adult themes or higher toxicity scores.
+- **PROHIBITED**: Blocked automatically or by Sentinels.
+- **STRIKE SYSTEM**: 3 strikes result in permanent expulsion from the protocol.
 
-## Local Development (Manual)
+## 🛡️ Security
 
-### Backend
-1. `cd backend`
-2. `python -m venv venv`
-3. `.\venv\Scripts\activate` (Windows) or `source venv/bin/activate` (Unix)
-4. `pip install -r requirements.txt`
-5. `python manage.py migrate`
-6. `python manage.py runserver`
+- JWT-based authorization.
+- PBKDF2 with SHA256 password hashing.
+- Role-based access control (RBAC).
+- CORS policies and rate limiting preparation.
 
-### Frontend
-1. `cd frontend`
-2. `npm install`
-3. `npm run dev`
+## 📝 License
 
-## AI Moderation
-The platform includes an AI-assisted moderation pipeline. When a post is created:
-1. A Celery task is triggered.
-2. The content is analyzed for toxicity, hate, violence, and self-harm.
-3. The post is classified as `SAFE`, `MATURE`, or `PROHIBITED`.
-4. `PROHIBITED` posts are hidden; `MATURE` posts are only visible to 18+ users.
-
-## Governance & Strikes
-Admins can issue strikes to users. 
-- **3 Strikes**: Automatic permanent suspension.
-- **Audit Logs**: All moderator actions are logged in the `AuditLog` table.
+Proprietary. Built for Tejasstoic.

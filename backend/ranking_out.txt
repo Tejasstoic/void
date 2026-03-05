@@ -1,0 +1,19 @@
+Creating test database for alias 'default'...
+E
+======================================================================
+ERROR: test_ranking_engine_calculation (ranking.tests.RankingEngineTests.test_ranking_engine_calculation)
+Test that the ranking engine calculates score based on recency and engagement.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\void-platform\backend\ranking\tests.py", line 19, in setUp
+    self.user1 = User.objects.create_user(email='test1@example.com', password='testpassword123', alias='anon1')
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: UserManager.create_user() missing 1 required positional argument: 'date_of_birth'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=1)
+Destroying test database for alias 'default'...
+Found 1 test(s).
+System check identified no issues (0 silenced).

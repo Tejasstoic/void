@@ -19,7 +19,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-ede(hx%au8&txs(0=#(_j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 
 
 # Application definition
@@ -42,6 +42,13 @@ INSTALLED_APPS = [
     'content.apps.ContentConfig',
     'moderation.apps.ModerationConfig',
     'governance.apps.GovernanceConfig',
+    
+    # Phase 2: Engagement apps
+    'engagement.apps.EngagementConfig',
+    'ranking.apps.RankingConfig',
+    'trending.apps.TrendingConfig',
+    'reputation.apps.ReputationConfig',
+    'notifications.apps.NotificationsConfig',
 ]
 
 MIDDLEWARE = [
@@ -116,7 +123,13 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Celery periodic tasks
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-ephemeral-posts-every-15-mins': {
+        'task': 'content.tasks.cleanup_ephemeral_posts',
+        'schedule': 900.0, # 15 minutes
+    },
+}
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
@@ -148,8 +161,8 @@ REST_FRAMEWORK = {
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": config('CELERY_BROKER_URL', default='redis://localhost:6379/0'),
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache" if DEBUG else "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "unique-snowflake" if DEBUG else config('CELERY_BROKER_URL', default='redis://localhost:6379/0'),
     }
 }
 
@@ -192,3 +205,38 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+
+# Celery Beat Schedule (periodic tasks)
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'recalculate-rankings': {
+        'task': 'ranking.tasks.recalculate_rankings',
+        'schedule': 600.0,  # Every 10 minutes
+    },
+    'update-trending': {
+        'task': 'trending.tasks.update_trending',
+        'schedule': 300.0,  # Every 5 minutes
+    },
+    'evaluate-badges': {
+        'task': 'reputation.tasks.evaluate_all_badges',
+        'schedule': 1800.0,  # Every 30 minutes
+    },
+    'engagement-notifications': {
+        'task': 'notifications.tasks.create_engagement_notifications',
+        'schedule': 900.0,  # Every 15 minutes
+    },
+    'aggregate-engagement': {
+        'task': 'engagement.tasks.aggregate_engagement_metrics',
+        'schedule': 600.0,  # Every 10 minutes
+    },
+    'update-user-preferences': {
+        'task': 'ranking.tasks.update_user_preferences',
+        'schedule': 3600.0,  # Every hour
+    },
+}
+
+# Development/Debug Overrides
+if DEBUG:
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True

@@ -28,7 +28,7 @@ export default function PostForm() {
         <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full mb-8 glass p-6 rounded-3xl"
+            className="w-full mb-10 glass-premium p-8 rounded-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
         >
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="relative">
