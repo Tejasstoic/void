@@ -1,0 +1,22 @@
+ # Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+db.sqlite3
+
+# Logs
+*.log
+out*
+error.txt
+
+# Node
+node_modules/
+.next/
+
+# OS files
+.DS_Store
+Thumbs.db
