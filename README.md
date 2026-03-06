@@ -3,7 +3,7 @@
 
 VOID is a production-ready, industry-standard, scalable anonymous social media platform focused on public anonymity, internal accountability, and transparent AI-assisted governance.
 
-## 🚀 Features
+## 🚀 Features (Status: Deployed to Vercel/Render)
 
 - **Anonymous Interaction**: Public anonymity with randomized aliases.
 - **Internal Accountability**: Strike-based governance system for community safety.
