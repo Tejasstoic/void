@@ -2,7 +2,6 @@
 
 import { Search, LogOut, Shield, ShieldAlert, X } from "lucide-react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/use-auth-store";
@@ -18,7 +17,6 @@ export default function FeedPage() {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [isSearching, setIsSearching] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false);
 
     useEffect(() => {
         if (!accessToken) {

@@ -19,9 +19,31 @@ import {
     Activity,
     Loader2,
     Search,
-    Ban,
-    UserX
+    Ban
 } from "lucide-react";
+
+interface ModPost {
+    id: string;
+    author_alias: string;
+    content: string;
+    moderation_status: string;
+    toxicity_score: number;
+}
+
+interface AdminLog {
+    id: string;
+    action_type: string;
+    reason: string;
+    created_at: string;
+}
+
+interface AdminUser {
+    id: string;
+    alias: string;
+    role: string;
+    strike_count: number;
+    created_at: string;
+}
 
 export default function AdminDashboard() {
     const queryClient = useQueryClient();
@@ -145,13 +167,11 @@ export default function AdminDashboard() {
                                             {queue?.length === 0 ? (
                                                 <p className="text-sm text-void-muted text-center py-10">Queue is clear. Well done, Sentinel.</p>
                                             ) : (
-                                                queue?.map((post: any) => (
+                                                queue?.map((post: ModPost) => (
                                                     <ModItem
                                                         key={post.id}
-                                                        id={post.id}
                                                         user={post.author_alias || 'Anon'}
                                                         content={post.content}
-                                                        status={post.moderation_status}
                                                         score={post.toxicity_score || 0}
                                                         onApprove={() => moderateMutation.mutate({ postId: post.id, status: 'SAFE' })}
                                                         onReject={() => moderateMutation.mutate({ postId: post.id, status: 'PROHIBITED' })}
@@ -171,7 +191,7 @@ export default function AdminDashboard() {
                                         {logs?.length === 0 ? (
                                             <p className="text-xs text-void-muted">No recent governance events.</p>
                                         ) : (
-                                            logs?.map((log: any) => (
+                                            logs?.map((log: AdminLog) => (
                                                 <EventItem
                                                     key={log.id}
                                                     icon={log.action_type.includes('BAN') ? <XCircle size={14} /> : <Shield size={14} />}
@@ -224,7 +244,7 @@ export default function AdminDashboard() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
-                                            {allUsers?.map((user: any) => (
+                                            {allUsers?.map((user: AdminUser) => (
                                                 <tr key={user.id} className="hover:bg-white/[0.02] transition-colors group">
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-col">
@@ -313,7 +333,7 @@ function StatCard({ title, value, delta, icon }: { title: string, value: string,
     );
 }
 
-function ModItem({ id, user, content, status, score, onApprove, onReject }: { id: string, user: string, content: string, status: string, score: number, onApprove: () => void, onReject: () => void }) {
+function ModItem({ user, content, score, onApprove, onReject }: { user: string, content: string, score: number, onApprove: () => void, onReject: () => void }) {
     return (
         <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
             <div className="flex flex-col gap-1 max-w-[70%]">
