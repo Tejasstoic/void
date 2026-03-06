@@ -48,7 +48,7 @@ VOID is a production-ready, industry-standard, scalable anonymous social media p
 
 4. The platform will be available at:
    - Frontend: `http://localhost:3000`
-   - Backend API: `http://localhost:8000/api`
+   - Backend API: `https://void-backend-kia3.onrender.com/api`
 
 ### Local Development Setup
 

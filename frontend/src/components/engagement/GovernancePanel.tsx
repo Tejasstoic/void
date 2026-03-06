@@ -25,7 +25,7 @@ export const GovernancePanel: React.FC = () => {
 
     const fetchProposals = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/governance/proposals/');
+            const res = await fetch('https://void-backend-kia3.onrender.com/api/governance/proposals/');
             const data = await res.json();
             // Filter for pending only
             setProposals(data.filter((p: Proposal) => p.status === 'PENDING'));
@@ -39,7 +39,7 @@ export const GovernancePanel: React.FC = () => {
     const handleVote = async (proposalId: string, choice: string) => {
         setVotingId(proposalId);
         try {
-            const res = await fetch(`http://localhost:8080/api/governance/proposals/${proposalId}/vote/`, {
+            const res = await fetch(`https://void-backend-kia3.onrender.com/api/governance/proposals/${proposalId}/vote/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
