@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+// Forced redeploy to resolve Vercel directory alignment
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 
