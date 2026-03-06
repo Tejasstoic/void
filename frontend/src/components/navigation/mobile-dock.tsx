@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageSquare, Shield, Users, Bell, User, ShieldAlert } from "lucide-react";
+import { MessageSquare, Shield, Bell, User, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/use-auth-store";
 

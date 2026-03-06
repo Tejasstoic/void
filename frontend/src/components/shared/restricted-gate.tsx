@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/use-auth-store";
-import { ShieldAlert, ChevronRight, Lock } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Lock } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function RestrictedGate({ children }: { children: React.ReactNode }) {
     const user = useAuthStore((state) => state.user);
     const [isAuthorized, setIsAuthorized] = useState(false);
-    const [showWarning, setShowWarning] = useState(false);
 
     useEffect(() => {
         if (user?.role === "ADMIN" || user?.role === "MODERATOR") {
@@ -21,11 +20,7 @@ export default function RestrictedGate({ children }: { children: React.ReactNode
             const age = new Date().getFullYear() - birthDate.getFullYear();
             if (age >= 18) {
                 setIsAuthorized(true);
-            } else {
-                setShowWarning(true);
             }
-        } else {
-            setShowWarning(true);
         }
     }, [user]);
 
