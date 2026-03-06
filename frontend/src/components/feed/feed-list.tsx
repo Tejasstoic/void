@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
-import FeedItem from "./feed-item";
+import FeedItem, { Post } from "./feed-item";
 import RestrictedToggle from "./restricted-toggle";
 import { useAuthStore } from "@/store/use-auth-store";
 import { Loader2, Zap } from "lucide-react";
@@ -113,7 +113,7 @@ export default function FeedList({ restrictedModeOverride, searchQuery }: { rest
                 </div>
             ) : (
                 <>
-                    {posts.map((post: any) => (
+                    {posts.map((post: Post) => (
                         <FeedItem key={post.id} post={post} />
                     ))}
 

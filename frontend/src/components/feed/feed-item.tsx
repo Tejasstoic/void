@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Heart, ShieldAlert, ShieldCheck, User, Clock, Send, Loader2, CornerDownRight, Bookmark, Share2, Eye, Fingerprint } from "lucide-react";
+import { MessageSquare, ShieldAlert, User, Clock, Send, Loader2, CornerDownRight, Bookmark, Share2, Eye, Fingerprint } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -11,15 +11,30 @@ import BadgeDisplay from "./../engagement/BadgeDisplay";
 import { useEngagement } from "@/hooks/useEngagement";
 import { useEffect, useRef } from "react";
 
-interface Comment {
+export interface Comment {
     id: number;
     author_alias: string;
     content: string;
     created_at: string;
+    parent?: number;
     replies?: Comment[];
 }
 
-interface Post {
+export interface Poll {
+    id: string;
+    question: string;
+    allows_multiple: boolean;
+    options: Array<{
+        id: string;
+        text: string;
+        vote_count: number;
+        vote_percentage: number;
+    }>;
+    total_votes: number;
+    user_voted: boolean;
+}
+
+export interface Post {
     id: string;
     author_alias: string;
     content: string;
@@ -33,7 +48,7 @@ interface Post {
     is_bookmarked: boolean;
     created_at: string;
     author_badges?: Array<{ type: string; icon: string; name: string }>;
-    poll?: any;
+    poll?: Poll | null;
     is_zk_verified?: boolean;
 }
 
@@ -75,13 +90,7 @@ export default function FeedItem({ post }: { post: Post }) {
         enabled: showComments,
     });
 
-    const reactMutation = useMutation({
-        mutationFn: (type: string) => api.post(`/content/posts/${post.id}/react/`, { reaction_type: type }),
-        onSuccess: () => {
-            // Optimistically handled by AnimatedReactions, but invalidate in background
-            queryClient.invalidateQueries({ queryKey: ["posts"] });
-        },
-    });
+    // Dwell time tracking logic simplified
 
     const reportMutation = useMutation({
         mutationFn: () => api.post(`/content/reports/`, { post: post.id, reason: "User reported from feed" }),
@@ -278,7 +287,7 @@ export default function FeedItem({ post }: { post: Post }) {
                                     {comments?.length === 0 ? (
                                         <p className="text-[10px] text-center text-void-muted uppercase tracking-widest py-2">No pulses in this thread yet.</p>
                                     ) : (
-                                        comments?.filter((c: any) => !c.parent).map((comment: Comment) => (
+                                        comments?.filter((c: Comment) => !c.parent).map((comment: Comment) => (
                                             <CommentItem key={comment.id} comment={comment} />
                                         ))
                                     )}

@@ -6,6 +6,7 @@ interface User {
     username: string;
     role: "admin" | "MODERATOR" | "ADMIN" | "USER";
     date_of_birth?: string;
+    is_18_plus?: boolean;
 }
 
 interface AuthState {

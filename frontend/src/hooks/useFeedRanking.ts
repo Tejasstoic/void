@@ -69,7 +69,7 @@ export function useFeedRanking(options: FeedOptions = {}) {
         setPosts((prev) => (append ? [...prev, ...data.results] : data.results));
         setHasNext(data.has_next);
         setPage(pageNum);
-      } catch (_err: unknown) {
+      } catch {
         // Fallback to chronological feed if ranking isn't available
         try {
           const fallbackRes = await api.get("/content/posts/", {

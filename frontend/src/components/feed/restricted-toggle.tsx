@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldAlert, Zap } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 
 interface RestrictedToggleProps {
     isEnabled: boolean;
