@@ -1,4 +1,6 @@
+
 "use client";
+
 
 import Link from "next/link";
 import { Shield, Lock, Users, ChevronRight, Activity, Zap, Eye, Globe } from "lucide-react";
