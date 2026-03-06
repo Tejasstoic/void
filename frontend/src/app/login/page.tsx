@@ -9,7 +9,7 @@ export default function LoginPage() {
             <LoginForm />
 
             <p className="mt-8 text-sm text-void-muted">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/register" className="text-void-accent hover:underline">
                     Join the Void
                 </Link>

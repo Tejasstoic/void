@@ -25,8 +25,9 @@ export default function RegisterForm() {
         try {
             await api.post("/users/register/", formData);
             router.push("/login?registered=true");
-        } catch (err: any) {
-            setError(err.response?.data?.email?.[0] || err.response?.data?.password?.[0] || "Registration failed. Check your details.");
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { email?: string[], password?: string[] } } };
+            setError(error.response?.data?.email?.[0] || error.response?.data?.password?.[0] || "Registration failed. Check your details.");
         } finally {
             setIsLoading(false);
         }

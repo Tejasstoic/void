@@ -24,8 +24,9 @@ export default function LoginForm() {
             const res = await api.post("/users/login/", { email, password });
             setAuth(res.data.user, res.data.access, res.data.refresh);
             router.push("/feed");
-        } catch (err: any) {
-            setError(err.response?.data?.detail || "Invalid credentials. Please try again.");
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { detail?: string } } };
+            setError(error.response?.data?.detail || "Invalid credentials. Please try again.");
         } finally {
             setIsLoading(false);
         }

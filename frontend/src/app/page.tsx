@@ -3,7 +3,7 @@
 
 
 import Link from "next/link";
-import { Shield, Lock, Users, ChevronRight, Activity, Zap, Eye, Globe } from "lucide-react";
+import { Shield, Lock, Users, ChevronRight, Activity, Zap, Globe } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "@/store/use-auth-store";
 import Image from "next/image";
@@ -84,7 +84,7 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="text-lg md:text-xl text-void-muted mb-12 max-w-2xl mx-auto font-medium"
           >
-            Speak freely. Judge fairly. Govern together. Experience the world's first AI-moderated anonymous social protocol.
+            Speak freely. Judge fairly. Govern together. Experience the world&apos;s first AI-moderated anonymous social protocol.
           </motion.p>
 
           <motion.div

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/use-auth-store";
 import FeedList from "@/components/feed/feed-list";
 import { ShieldAlert, ArrowLeft, Lock } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function RestrictedZonePage() {
