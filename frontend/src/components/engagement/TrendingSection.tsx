@@ -1,6 +1,6 @@
 "use client";
 
-import { useTrending } from "@/hooks/useTrending";
+import { useTrending, type TrendingPost } from "@/hooks/useTrending";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Flame, Moon, MessageCircle, Zap } from "lucide-react";
@@ -87,7 +87,7 @@ export default function TrendingSection() {
                         transition={{ duration: 0.2 }}
                         className="space-y-2"
                     >
-                        {activeCategory?.posts?.slice(0, 5).map((post: any, i: number) => (
+                        {activeCategory?.posts?.slice(0, 5).map((post: TrendingPost, i: number) => (
                             <Link
                                 key={post.id}
                                 href={`/post/${post.id}`}

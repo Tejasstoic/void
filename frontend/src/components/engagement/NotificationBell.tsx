@@ -2,9 +2,9 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
-import { Bell, Check, CheckCheck, X } from "lucide-react";
+import { Bell, CheckCheck, X } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
-import Link from "next/link";
+
 
 const TYPE_ICONS: Record<string, string> = {
     REPLY: "💬",

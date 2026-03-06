@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import api from "@/lib/api";
 
-interface TrendingPost {
+export interface TrendingPost {
     id: string;
     author_alias: string;
     content: string;
@@ -12,13 +12,13 @@ interface TrendingPost {
     created_at: string;
 }
 
-interface TrendingCategory {
+export interface TrendingCategory {
     label: string;
     posts: TrendingPost[];
     scores: number[];
 }
 
-type TrendingData = Record<string, TrendingCategory>;
+export type TrendingData = Record<string, TrendingCategory>;
 
 export function useTrending() {
     const [trending, setTrending] = useState<TrendingData>({});

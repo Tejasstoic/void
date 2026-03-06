@@ -81,7 +81,7 @@ export const GovernancePanel: React.FC = () => {
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="proposal-card p-4 rounded-xl bg-white/5 border border-white/10"
                         >
-                            <p className="text-sm text-gray-400 mb-2 italic">"{proposal.target_post_content.substring(0, 100)}..."</p>
+                            <p className="text-sm text-gray-400 mb-2 italic">&quot;{proposal.target_post_content.substring(0, 100)}...&quot;</p>
                             <p className="text-sm font-semibold text-purple-300 mb-4">Reason: {proposal.reason}</p>
 
                             <div className="flex flex-wrap gap-2">

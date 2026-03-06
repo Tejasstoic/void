@@ -7,7 +7,7 @@ import EngagementPulse from "./EngagementPulse";
 import { useEffect } from "react";
 
 export default function GlobalEngagement() {
-    const { user, accessToken } = useAuthStore();
+    const { accessToken } = useAuthStore();
     const {
         startSession,
         endSession,
