@@ -54,5 +54,20 @@ from dj_rest_auth.registration.views import SocialLoginView
 
 class GoogleLoginView(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
-    callback_url = 'http://localhost:3000/' # Default callback, we send token manually so this is a placeholder
+    callback_url = 'https://void-dmz8.vercel.app/' 
     client_class = OAuth2Client
+
+    def post(self, request, *args, **kwargs):
+        # Add extra logging to debug 500 errors in production
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Google Login attempt with data: {request.data.keys()}")
+        
+        try:
+            return super().post(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Google Login Error: {str(e)}")
+            return Response(
+                {"detail": f"Social authentication failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
