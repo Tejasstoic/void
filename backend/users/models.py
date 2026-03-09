@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
     
     # Platform specific
     alias = models.CharField(max_length=50, unique=True, blank=True, null=True) # Optional randomized alias
@@ -76,6 +76,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_18_plus(self):
+        if not self.date_of_birth:
+            return False
         today = timezone.now().date()
         age = today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
         return age >= 18
