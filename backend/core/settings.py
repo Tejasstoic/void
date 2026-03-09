@@ -237,6 +237,7 @@ REST_AUTH = {
 # AllAuth Configuration
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # Custom User has no username field (email-only auth)
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none' # We trust Google
 
