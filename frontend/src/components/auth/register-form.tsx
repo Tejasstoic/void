@@ -109,7 +109,7 @@ export default function RegisterForm() {
                             type="email"
                             required
                             className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 outline-none focus:border-void-accent/50 transition-colors"
-                            placeholder="name@example.com"
+                            placeholder="you@gmail.com"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
