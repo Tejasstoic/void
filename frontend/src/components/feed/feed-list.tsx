@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import FeedItem, { Post } from "./feed-item";
-import RestrictedToggle from "./restricted-toggle";
 import { useAuthStore } from "@/store/use-auth-store";
 import { Loader2, Zap } from "lucide-react";
 import { useFeedRanking } from "@/hooks/useFeedRanking";
@@ -98,14 +97,6 @@ export default function FeedList({ restrictedModeOverride, searchQuery }: { rest
                 <Zap className="h-3.5 w-3.5 text-void-accent" />
                 <h2 className="text-[10px] uppercase tracking-[0.3em] font-bold text-void-muted">Latest Pulses</h2>
             </div>
-
-            {!restrictedModeOverride && (
-                <RestrictedToggle
-                    isEnabled={restrictedMode}
-                    onToggle={setRestrictedMode}
-                    isEligible={!!user?.is_18_plus}
-                />
-            )}
 
             {posts.length === 0 && !isLoading ? (
                 <div className="py-20 text-center text-void-muted">
