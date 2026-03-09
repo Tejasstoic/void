@@ -75,6 +75,10 @@ class GoogleLoginView(SocialLoginView):
         
         try:
             response = super().post(request, *args, **kwargs)
+            if response.status_code <= 201:
+                # Add user data for frontend consistency
+                if hasattr(self, 'user'):
+                    response.data['user'] = UserSerializer(self.user).data
             logger.info("Google Auth Success")
             return response
         except Exception as e:
