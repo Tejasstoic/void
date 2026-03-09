@@ -24,11 +24,13 @@ export default function LoginForm() {
 
         try {
             const res = await api.post("/users/login/", { email, password });
+            const accessToken = res.data.access || res.data.access_token;
+            const refreshToken = res.data.refresh || res.data.refresh_token;
 
             // Get user from response body, or decode from JWT as fallback
             let user = res.data.user;
             if (!user) {
-                const tokenPayload = JSON.parse(atob(res.data.access.split('.')[1]));
+                const tokenPayload = JSON.parse(atob(accessToken.split('.')[1]));
                 user = {
                     id: tokenPayload.user_id,
                     email: tokenPayload.email,
@@ -37,7 +39,7 @@ export default function LoginForm() {
                 };
             }
 
-            setAuth(user, res.data.access, res.data.refresh);
+            setAuth(user, accessToken, refreshToken);
             router.push("/feed");
         } catch (err: unknown) {
             const error = err as { response?: { data?: { detail?: string } } };
@@ -52,16 +54,24 @@ const handleGoogleSuccess = async (tokenResponse: any) => {
         setError("");
         console.log("Exchanging token with backend...");
         try {
-            // dj-rest-auth expects the `credential` (id_token) for Google OAuth2 when using JWT
             const res = await api.post("/users/login/google/", {
                 access_token: tokenResponse.credential,
                 id_token: tokenResponse.credential
             });
 
-            console.log("Backend response:", res.data);
+            console.log("Full Backend Response:", res.data);
+            
+            const accessToken = res.data.access || res.data.access_token;
+            const refreshToken = res.data.refresh || res.data.refresh_token;
             let user = res.data.user;
+
+            if (!accessToken) {
+                throw new Error("No access token received from backend");
+            }
+
             if (!user) {
-                const tokenPayload = JSON.parse(atob(res.data.access.split(".")[1]));
+                console.log("Decoding user from token...");
+                const tokenPayload = JSON.parse(atob(accessToken.split(".")[1]));
                 user = {
                     id: tokenPayload.user_id,
                     email: tokenPayload.email,
@@ -70,10 +80,11 @@ const handleGoogleSuccess = async (tokenResponse: any) => {
                 };
             }
 
-            setAuth(user, res.data.access, res.data.refresh);
+            console.log("Final User Object:", user);
+            setAuth(user, accessToken, refreshToken);
             router.push("/feed");
         } catch (err: any) {
-            console.error("Backend Error:", err);
+            console.error("Backend Error Object:", err);
             const backendError = err.response?.data?.detail || err.response?.data || err.message;
             console.error("Detailed error from backend:", backendError);
             setError(`Google sign-in failed: ${typeof backendError === 'string' ? backendError : JSON.stringify(backendError)}`);

@@ -1,7 +1,6 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '@/lib/api';
 
 interface Proposal {
     id: string;
@@ -25,10 +24,16 @@ export const GovernancePanel: React.FC = () => {
 
     const fetchProposals = async () => {
         try {
-            const res = await fetch('https://void-backend-kia3.onrender.com/api/governance/proposals/');
-            const data = await res.json();
-            // Filter for pending only
-            setProposals(data.filter((p: Proposal) => p.status === 'PENDING'));
+            const res = await api.get('/governance/proposals/');
+            const data = res.data;
+            
+            // Defensively handle non-array responses
+            if (Array.isArray(data)) {
+                setProposals(data.filter((p: Proposal) => p.status === 'PENDING'));
+            } else {
+                console.warn('Proposals API did not return an array', data);
+                setProposals([]);
+            }
         } catch (err) {
             console.error('Failed to fetch proposals', err);
         } finally {
@@ -39,16 +44,9 @@ export const GovernancePanel: React.FC = () => {
     const handleVote = async (proposalId: string, choice: string) => {
         setVotingId(proposalId);
         try {
-            const res = await fetch(`https://void-backend-kia3.onrender.com/api/governance/proposals/${proposalId}/vote/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming token is in localStorage
-                },
-                body: JSON.stringify({ choice })
-            });
+            const res = await api.post(`/governance/proposals/${proposalId}/vote/`, { choice });
 
-            if (res.ok) {
+            if (res.status === 200 || res.status === 201) {
                 // Refresh
                 fetchProposals();
             }
