@@ -22,7 +22,20 @@ export default function LoginForm() {
 
         try {
             const res = await api.post("/users/login/", { email, password });
-            setAuth(res.data.user, res.data.access, res.data.refresh);
+
+            // Get user from response body, or decode from JWT as fallback
+            let user = res.data.user;
+            if (!user) {
+                const tokenPayload = JSON.parse(atob(res.data.access.split('.')[1]));
+                user = {
+                    id: tokenPayload.user_id,
+                    email: tokenPayload.email,
+                    role: tokenPayload.role,
+                    is_18_plus: tokenPayload.is_18_plus,
+                };
+            }
+
+            setAuth(user, res.data.access, res.data.refresh);
             router.push("/feed");
         } catch (err: unknown) {
             const error = err as { response?: { data?: { detail?: string } } };

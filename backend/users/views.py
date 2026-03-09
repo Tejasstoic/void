@@ -10,6 +10,13 @@ User = get_user_model()
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            user = User.objects.get(email=request.data.get('email'))
+            response.data['user'] = UserSerializer(user).data
+        return response
     
 class RegisterView(APIView):
     permission_classes = [AllowAny]
