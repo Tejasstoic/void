@@ -259,6 +259,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         },
+        'FETCH_USERINFO': False,
         'APP': {
             'client_id': config('GOOGLE_CLIENT_ID', default=''),
             'secret': config('GOOGLE_CLIENT_SECRET', default=''),
