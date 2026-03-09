@@ -76,14 +76,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_18_plus(self):
-        # Temporary logic: If user signed up via Google (no DOB yet), allow for now
-        # until we implement a profile completion flow.
+        # Temporarily assuming anyone without a DOB is 18+ to avoid backend hangs
+        # caused by DB queries inside properties during serialization.
         if not self.date_of_birth:
-            # We check if they have a social account linked
-            from allauth.socialaccount.models import SocialAccount
-            if SocialAccount.objects.filter(user=self, provider='google').exists():
-                return True
-            return False
+            return True
         
         today = timezone.now().date()
         age = today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
