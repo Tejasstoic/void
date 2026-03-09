@@ -6,6 +6,8 @@ import api from "@/lib/api";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGoogleLogin } from "@react-oauth/google";
+import Image from "next/image";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
@@ -45,6 +47,40 @@ export default function LoginForm() {
         }
     };
 
+    const googleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setIsLoading(true);
+            setError("");
+            try {
+                // dj-rest-auth handles Google access tokens for authentication
+                const res = await api.post("/users/login/google/", {
+                    access_token: tokenResponse.access_token
+                });
+
+                let user = res.data.user;
+                if (!user) {
+                    const tokenPayload = JSON.parse(atob(res.data.access.split('.')[1]));
+                    user = {
+                        id: tokenPayload.user_id,
+                        email: tokenPayload.email,
+                        role: tokenPayload.role,
+                        is_18_plus: tokenPayload.is_18_plus,
+                    };
+                }
+
+                setAuth(user, res.data.access, res.data.refresh);
+                router.push("/feed");
+            } catch (err: unknown) {
+                setError("Google authentication failed. Please try again.");
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        onError: () => {
+            setError("Google login popup closed or failed.");
+        }
+    });
+
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -54,6 +90,22 @@ export default function LoginForm() {
             <div className="mb-8">
                 <h2 className="text-3xl font-bold tracking-tight">Welcome Back</h2>
                 <p className="text-void-muted mt-2">Enter your credentials to access the void.</p>
+            </div>
+
+            <button
+                type="button"
+                onClick={() => googleLogin()}
+                disabled={isLoading}
+                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 transition-colors mb-6 font-semibold"
+            >
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
+                Continue with Google
+            </button>
+
+            <div className="relative flex items-center mb-6">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink-0 mx-4 text-xs font-bold uppercase tracking-widest text-void-muted">OR</span>
+                <div className="flex-grow border-t border-white/10"></div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">

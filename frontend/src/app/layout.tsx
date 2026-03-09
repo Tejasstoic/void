@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 import GlobalEngagement from "@/components/engagement/GlobalEngagement";
 import MobileDock from "@/components/navigation/mobile-dock";
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,11 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <body className="antialiased bg-background text-foreground selection:bg-void-accent selection:text-void-black">
-        <QueryProvider>
-          {children}
-          <MobileDock />
-          <GlobalEngagement />
-        </QueryProvider>
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "GOOGLE_CLIENT_ID_PLACEHOLDER"}>
+          <QueryProvider>
+            {children}
+            <MobileDock />
+            <GlobalEngagement />
+          </QueryProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
