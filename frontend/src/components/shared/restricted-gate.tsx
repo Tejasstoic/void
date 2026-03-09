@@ -10,17 +10,10 @@ export default function RestrictedGate({ children }: { children: React.ReactNode
     const [isAuthorized, setIsAuthorized] = useState(false);
 
     useEffect(() => {
-        if (user?.role === "ADMIN" || user?.role === "MODERATOR") {
+        if (user?.role === "ADMIN" || user?.role === "MODERATOR" || user?.is_18_plus) {
             setIsAuthorized(true);
-            return;
-        }
-
-        if (user?.date_of_birth) {
-            const birthDate = new Date(user.date_of_birth);
-            const age = new Date().getFullYear() - birthDate.getFullYear();
-            if (age >= 18) {
-                setIsAuthorized(true);
-            }
+        } else {
+            setIsAuthorized(false);
         }
     }, [user]);
 
