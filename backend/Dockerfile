@@ -25,5 +25,6 @@ COPY . /app/
 # Expose port
 EXPOSE 8000
 
-# Run entrypoint script or direct command
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Run migrations and start gunicorn
+# Note: $PORT is provided by Render
+CMD python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
