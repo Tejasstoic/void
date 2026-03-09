@@ -179,12 +179,21 @@ REST_FRAMEWORK = {
     }
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache" if DEBUG else "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "unique-snowflake" if DEBUG else config('CELERY_BROKER_URL', default='redis://localhost:6379/0'),
+_redis_url = config('CELERY_BROKER_URL', default='')
+if not DEBUG and _redis_url and not _redis_url.startswith('redis://localhost'):
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": _redis_url,
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
 
 # Simple JWT configuration
 SIMPLE_JWT = {
