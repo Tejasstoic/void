@@ -9,6 +9,19 @@ const nextConfig: NextConfig = {
       { protocol: "https" as const, hostname: "void-backend-kia3.onrender.com" },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
