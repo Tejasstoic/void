@@ -41,15 +41,17 @@ export default function RegisterForm() {
         }
     };
 
-    const handleGoogleSuccess = async (tokenResponse: any) => {
+const handleGoogleSuccess = async (tokenResponse: any) => {
         setIsLoading(true);
         setError("");
+        console.log("Exchanging token with backend (signup)...");
         try {
             const res = await api.post("/users/login/google/", {
                 access_token: tokenResponse.credential,
                 id_token: tokenResponse.credential
             });
 
+            console.log("Backend response:", res.data);
             let user = res.data.user;
             if (!user) {
                 const tokenPayload = JSON.parse(atob(res.data.access.split(".")[1]));
@@ -63,8 +65,11 @@ export default function RegisterForm() {
 
             setAuth(user, res.data.access, res.data.refresh);
             router.push("/feed");
-        } catch {
-            setError("Google sign-up failed. Please try again.");
+        } catch (err: any) {
+            console.error("Backend Error:", err);
+            const backendError = err.response?.data?.detail || err.response?.data || err.message;
+            console.error("Detailed error from backend:", backendError);
+            setError(`Google sign-up failed: ${typeof backendError === 'string' ? backendError : JSON.stringify(backendError)}`);
         } finally {
             setIsLoading(false);
         }

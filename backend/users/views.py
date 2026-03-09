@@ -55,10 +55,22 @@ class GoogleLoginView(SocialLoginView):
     client_class = OAuth2Client
 
     def post(self, request, *args, **kwargs):
+        from django.conf import settings
         import logging
         import traceback
         logger = logging.getLogger(__name__)
         
+        # Check if Google Client ID is configured
+        google_settings = getattr(settings, 'SOCIALACCOUNT_PROVIDERS', {}).get('google', {})
+        client_id = google_settings.get('APP', {}).get('client_id')
+        
+        if not client_id:
+            logger.error("GOOGLE_CLIENT_ID is not configured in settings.py or environment variables")
+            return Response(
+                {"detail": "Backend configuration error: GOOGLE_CLIENT_ID is missing from Render/backend environment."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            
         logger.info(f"Google Auth request keys: {list(request.data.keys())}")
         
         try:
