@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import api from "@/lib/api";
+import { useAuthStore } from "@/store/use-auth-store";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, ArrowRight, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function RegisterForm() {
     const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ export default function RegisterForm() {
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+    const setAuth = useAuthStore((state) => state.setAuth);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -26,12 +29,49 @@ export default function RegisterForm() {
             await api.post("/users/register/", formData);
             router.push("/login?registered=true");
         } catch (err: unknown) {
-            const error = err as { response?: { data?: { email?: string[], password?: string[] } } };
-            setError(error.response?.data?.email?.[0] || error.response?.data?.password?.[0] || "Registration failed. Check your details.");
+            const error = err as { response?: { data?: Record<string, string[]> } };
+            const data = error.response?.data;
+            const firstError = data
+                ? Object.values(data).flat()[0]
+                : undefined;
+            setError(firstError || "Registration failed. Check your details.");
         } finally {
             setIsLoading(false);
         }
     };
+
+    const googleSignup = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setIsLoading(true);
+            setError("");
+            try {
+                const res = await api.post("/users/login/google/", {
+                    access_token: tokenResponse.access_token,
+                });
+
+                let user = res.data.user;
+                if (!user) {
+                    const tokenPayload = JSON.parse(atob(res.data.access.split(".")[1]));
+                    user = {
+                        id: tokenPayload.user_id,
+                        email: tokenPayload.email,
+                        role: tokenPayload.role,
+                        is_18_plus: tokenPayload.is_18_plus,
+                    };
+                }
+
+                setAuth(user, res.data.access, res.data.refresh);
+                router.push("/feed");
+            } catch {
+                setError("Google sign-up failed. Please try again.");
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        onError: () => {
+            setError("Google sign-up was cancelled or failed.");
+        },
+    });
 
     return (
         <motion.div
@@ -42,6 +82,23 @@ export default function RegisterForm() {
             <div className="mb-8">
                 <h2 className="text-3xl font-bold tracking-tight">Join the Void</h2>
                 <p className="text-void-muted mt-2">Secure your anonymous identity.</p>
+            </div>
+
+            {/* Google Sign-Up */}
+            <button
+                type="button"
+                onClick={() => googleSignup()}
+                disabled={isLoading}
+                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 transition-colors mb-6 font-semibold"
+            >
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
+                Continue with Google
+            </button>
+
+            <div className="relative flex items-center mb-6">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink-0 mx-4 text-xs font-bold uppercase tracking-widest text-void-muted">OR</span>
+                <div className="flex-grow border-t border-white/10"></div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
