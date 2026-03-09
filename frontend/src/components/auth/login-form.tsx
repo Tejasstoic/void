@@ -6,7 +6,7 @@ import api from "@/lib/api";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import Image from "next/image";
 
 export default function LoginForm() {
@@ -47,39 +47,35 @@ export default function LoginForm() {
         }
     };
 
-    const googleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            setIsLoading(true);
-            setError("");
-            try {
-                // dj-rest-auth handles Google access tokens for authentication
-                const res = await api.post("/users/login/google/", {
-                    access_token: tokenResponse.access_token
-                });
+    const handleGoogleSuccess = async (tokenResponse: any) => {
+        setIsLoading(true);
+        setError("");
+        try {
+            // dj-rest-auth expects the `credential` (id_token) for Google OAuth2 when using JWT
+            const res = await api.post("/users/login/google/", {
+                access_token: tokenResponse.credential,
+                id_token: tokenResponse.credential
+            });
 
-                let user = res.data.user;
-                if (!user) {
-                    const tokenPayload = JSON.parse(atob(res.data.access.split('.')[1]));
-                    user = {
-                        id: tokenPayload.user_id,
-                        email: tokenPayload.email,
-                        role: tokenPayload.role,
-                        is_18_plus: tokenPayload.is_18_plus,
-                    };
-                }
-
-                setAuth(user, res.data.access, res.data.refresh);
-                router.push("/feed");
-            } catch (err: unknown) {
-                setError("Google authentication failed. Please try again.");
-            } finally {
-                setIsLoading(false);
+            let user = res.data.user;
+            if (!user) {
+                const tokenPayload = JSON.parse(atob(res.data.access.split(".")[1]));
+                user = {
+                    id: tokenPayload.user_id,
+                    email: tokenPayload.email,
+                    role: tokenPayload.role,
+                    is_18_plus: tokenPayload.is_18_plus,
+                };
             }
-        },
-        onError: () => {
-            setError("Google login popup closed or failed.");
+
+            setAuth(user, res.data.access, res.data.refresh);
+            router.push("/feed");
+        } catch {
+            setError("Google sign-in failed. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
-    });
+    };
 
     return (
         <motion.div
@@ -92,15 +88,17 @@ export default function LoginForm() {
                 <p className="text-void-muted mt-2">Enter your credentials to access the void.</p>
             </div>
 
-            <button
-                type="button"
-                onClick={() => googleLogin()}
-                disabled={isLoading}
-                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 transition-colors mb-6 font-semibold"
-            >
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
-                Continue with Google
-            </button>
+            <div className="w-full flex justify-center mb-6">
+                <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => setError("Google login failed.")}
+                    theme="filled_black"
+                    shape="pill"
+                    size="large"
+                    text="continue_with"
+                    width="100%"
+                />
+            </div>
 
             <div className="relative flex items-center mb-6">
                 <div className="flex-grow border-t border-white/10"></div>
