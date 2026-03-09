@@ -90,8 +90,15 @@ export default function LoginForm() {
 
             <div className="w-full flex justify-center mb-6">
                 <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => setError("Google login failed.")}
+                    onSuccess={(response) => {
+                        console.log("Google Login Success callback reached", response);
+                        handleGoogleSuccess(response);
+                    }}
+                    onError={() => {
+                        console.error("Google Login Error callback hit");
+                        setError("Google login failed.");
+                    }}
+                    use_fedcm_for_prompt={true}
                     theme="filled_black"
                     shape="pill"
                     size="large"
