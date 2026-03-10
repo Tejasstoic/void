@@ -2,6 +2,9 @@ from celery import shared_task
 from content.models import Post
 import time
 import random
+import logging
+
+logger = logging.getLogger(__name__)
 
 @shared_task
 def evaluate_post_toxicity(post_id):
@@ -10,9 +13,11 @@ def evaluate_post_toxicity(post_id):
     For MVP, this uses a simulated scoring logic. In production, this can 
     be replaced with an LLM or Perspective API call.
     """
+    logger.info(f"Starting moderation for post {post_id}")
     try:
         post = Post.objects.get(id=post_id)
     except Post.DoesNotExist:
+        logger.error(f"Post {post_id} not found during moderation")
         return
     
     content = post.content.lower()
