@@ -111,8 +111,8 @@ const handleGoogleSuccess = async (tokenResponse: any) => {
                         handleGoogleSuccess(response);
                     }}
                     onError={() => {
-                        console.error("Google Login Error callback hit");
-                        setError("Google login failed.");
+                        console.error("Google Login Error callback hit. Check your Google Cloud Console settings (origins, redirect URIs) and Client ID.");
+                        setError("Google login failed. Please check browser console for details.");
                     }}
                     use_fedcm_for_prompt={true}
                     theme="filled_black"

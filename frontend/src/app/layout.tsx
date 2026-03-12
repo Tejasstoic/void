@@ -23,15 +23,21 @@ import MainLayoutWrapper from "@/components/navigation/main-layout-wrapper";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "218380733132-0sk036rblo6jbduj4a8e2niff3q0u554.apps.googleusercontent.com";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  if (typeof window !== "undefined") {
+    console.log("Initializing GoogleOAuthProvider with Client ID:", GOOGLE_CLIENT_ID);
+  }
+
   return (
     <html lang="en" className="dark scroll-smooth">
       <body className="antialiased bg-background text-foreground selection:bg-void-accent selection:text-void-black">
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "GOOGLE_CLIENT_ID_PLACEHOLDER"}>
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
           <QueryProvider>
             <SidebarNav />
             <MainLayoutWrapper>
