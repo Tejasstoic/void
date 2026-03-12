@@ -21,23 +21,17 @@ import MobileDock from "@/components/navigation/mobile-dock";
 import SidebarNav from "@/components/navigation/sidebar-nav";
 import MainLayoutWrapper from "@/components/navigation/main-layout-wrapper";
 
-import { GoogleOAuthProvider } from "@react-oauth/google";
-
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "218380733132-0sk036rblo6jbduj4a8e2niff3q0u554.apps.googleusercontent.com";
+import GoogleAuthProvider from "@/providers/google-auth-provider";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  if (typeof window !== "undefined") {
-    console.log("Initializing GoogleOAuthProvider with Client ID:", GOOGLE_CLIENT_ID);
-  }
-
   return (
     <html lang="en" className="dark scroll-smooth">
       <body className="antialiased bg-background text-foreground selection:bg-void-accent selection:text-void-black">
-        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <GoogleAuthProvider>
           <QueryProvider>
             <SidebarNav />
             <MainLayoutWrapper>
@@ -46,7 +40,7 @@ export default function RootLayout({
             <MobileDock />
             <GlobalEngagement />
           </QueryProvider>
-        </GoogleOAuthProvider>
+        </GoogleAuthProvider>
       </body>
     </html>
   );
