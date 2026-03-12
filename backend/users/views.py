@@ -108,7 +108,7 @@ class UserListView(APIView):
 
 class GoogleLoginView(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
-    callback_url = 'https://void-dmz8.vercel.app/'
+    callback_url = 'https://void-gamma-sooty.vercel.app/'
     client_class = OAuth2Client
 
     def post(self, request, *args, **kwargs):
