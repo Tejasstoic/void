@@ -3,7 +3,7 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
 
-const GOOGLE_CLIENT_ID = "218380733132-0sk036rblo6jbduj4a8e2niff3q0u554.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "218380733132-0sk036rblo6jbduj4a8e2njff3q0u554.apps.googleusercontent.com";
 
 export default function GoogleAuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
