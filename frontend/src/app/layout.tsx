@@ -7,7 +7,7 @@ export const viewport = "width=device-width, initial-scale=1, maximum-scale=1, u
 
 export const metadata: Metadata = {
   title: "VOID | Anonymous Governance Platform",
-  description: "Anonymous social protocol with AI-assisted moderation and governance.",
+  description: "Anonymous social protocol with AI-assisted moderation and governance. Speak freely, governed anonymously.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 
 import GlobalEngagement from "@/components/engagement/GlobalEngagement";
 import MobileDock from "@/components/navigation/mobile-dock";
+import SidebarNav from "@/components/navigation/sidebar-nav";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -31,7 +32,10 @@ export default function RootLayout({
       <body className="antialiased bg-background text-foreground selection:bg-void-accent selection:text-void-black">
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "GOOGLE_CLIENT_ID_PLACEHOLDER"}>
           <QueryProvider>
-            {children}
+            <SidebarNav />
+            <div className="md:ml-64">
+              {children}
+            </div>
             <MobileDock />
             <GlobalEngagement />
           </QueryProvider>

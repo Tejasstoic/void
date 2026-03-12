@@ -148,3 +148,94 @@ class PollVote(models.Model):
 
     class Meta:
         unique_together = ('option', 'user')
+
+
+class Hashtag(models.Model):
+    """Hashtag / topic tag for discovery and categorization."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, unique=True, db_index=True)
+    post_count = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-post_count']
+
+    def __str__(self):
+        return f"#{self.name}"
+
+
+class PulseTag(models.Model):
+    """M2M linking Posts to Hashtags."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='tags')
+    hashtag = models.ForeignKey(Hashtag, on_delete=models.CASCADE, related_name='tagged_posts')
+
+    class Meta:
+        unique_together = ('post', 'hashtag')
+
+    def __str__(self):
+        return f"{self.post.id} -> #{self.hashtag.name}"
+
+
+class PulseView(models.Model):
+    """Track unique views per post for analytics."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='views')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    ip_hash = models.CharField(max_length=64, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['post', 'user']),
+            models.Index(fields=['post', 'ip_hash']),
+        ]
+
+    def __str__(self):
+        return f"View on {self.post.id}"
+
+
+class ConfessionRoom(models.Model):
+    """Anonymous confession room / topic channel."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(max_length=500, blank=True)
+    icon = models.CharField(max_length=10, default='💬')
+    is_active = models.BooleanField(default=True)
+    member_count = models.IntegerField(default=0)
+    post_count = models.IntegerField(default=0)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-member_count']
+
+    def __str__(self):
+        return f"{self.icon} {self.name}"
+
+
+class ConfessionRoomMember(models.Model):
+    """Membership in a confession room."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    room = models.ForeignKey(ConfessionRoom, on_delete=models.CASCADE, related_name='members')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='joined_rooms')
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('room', 'user')
+
+
+class AnonymousMessage(models.Model):
+    """Anonymous direct message between users."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField(max_length=1000)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['receiver', 'is_read', '-created_at']),
+        ]

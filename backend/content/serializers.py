@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from django.db import models
-from .models import Post, Comment, Reaction, Report, Bookmark, Poll, PollOption, PollVote
+from .models import (
+    Post, Comment, Reaction, Report, Bookmark,
+    Poll, PollOption, PollVote, Hashtag, PulseTag,
+    ConfessionRoom
+)
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author_alias = serializers.ReadOnlyField(source='author.alias')
@@ -16,11 +21,18 @@ class CommentSerializer(serializers.ModelSerializer):
             return CommentSerializer(obj.replies.all(), many=True, context=self.context).data
         return []
 
+
 class BookmarkSerializer(serializers.ModelSerializer):
+    post_data = serializers.SerializerMethodField()
+
     class Meta:
         model = Bookmark
-        fields = ['id', 'post', 'created_at']
+        fields = ['id', 'post', 'created_at', 'post_data']
         read_only_fields = ['id', 'created_at']
+
+    def get_post_data(self, obj):
+        return PostSerializer(obj.post, context=self.context).data
+
 
 class PollOptionSerializer(serializers.ModelSerializer):
     vote_percentage = serializers.SerializerMethodField()
@@ -35,6 +47,7 @@ class PollOptionSerializer(serializers.ModelSerializer):
         if total == 0:
             return 0
         return round((obj.vote_count / total) * 100, 1)
+
 
 class PollSerializer(serializers.ModelSerializer):
     options = PollOptionSerializer(many=True, read_only=True)
@@ -56,6 +69,14 @@ class PollSerializer(serializers.ModelSerializer):
             ).exists()
         return False
 
+
+class HashtagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hashtag
+        fields = ['id', 'name', 'post_count', 'created_at']
+        read_only_fields = ['id', 'post_count', 'created_at']
+
+
 class PostSerializer(serializers.ModelSerializer):
     author_alias = serializers.ReadOnlyField(source='author.alias')
     author_id = serializers.ReadOnlyField(source='author.id')
@@ -65,6 +86,7 @@ class PostSerializer(serializers.ModelSerializer):
     is_bookmarked = serializers.SerializerMethodField()
     author_badges = serializers.SerializerMethodField()
     poll = PollSerializer(read_only=True)
+    hashtags = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -74,7 +96,7 @@ class PostSerializer(serializers.ModelSerializer):
             'view_count', 'engagement_score',
             'reaction_counts', 'comment_count',
             'user_reaction', 'is_bookmarked', 'author_badges',
-            'poll', 'expires_at', 'is_ephemeral', 
+            'poll', 'hashtags', 'expires_at', 'is_ephemeral',
             'geo_privacy_radius', 'is_zk_verified', 'created_at'
         ]
         read_only_fields = ['id', 'moderation_status', 'toxicity_score',
@@ -110,11 +132,17 @@ class PostSerializer(serializers.ModelSerializer):
         except Exception:
             return []
 
+    def get_hashtags(self, obj):
+        tags = PulseTag.objects.filter(post=obj).select_related('hashtag')
+        return [{'name': t.hashtag.name, 'id': str(t.hashtag.id)} for t in tags]
+
+
 class ReactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reaction
         fields = ('id', 'post', 'user', 'reaction_type', 'created_at')
         read_only_fields = ('id', 'user', 'created_at')
+
 
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,3 +150,18 @@ class ReportSerializer(serializers.ModelSerializer):
         fields = ('id', 'post', 'reporter', 'reason', 'is_resolved', 'created_at')
         read_only_fields = ('id', 'reporter', 'created_at', 'is_resolved')
 
+
+class ConfessionRoomSerializer(serializers.ModelSerializer):
+    is_member = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ConfessionRoom
+        fields = ['id', 'name', 'description', 'icon', 'is_active',
+                  'member_count', 'post_count', 'created_at', 'is_member']
+        read_only_fields = ['id', 'member_count', 'post_count', 'created_at']
+
+    def get_is_member(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.members.filter(user=request.user).exists()
+        return False

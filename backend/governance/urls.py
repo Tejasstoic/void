@@ -9,7 +9,9 @@ urlpatterns = [
     path('', include(router.urls)),
     path('proposals/<uuid:proposal_id>/vote/', views.VoteView.as_view(), name='proposal-vote'),
     path('analytics/', views.AdminAnalyticsView.as_view(), name='admin-analytics'),
-    path('strike/<int:user_id>/', views.IssueStrikeView.as_view(), name='issue-strike'),
+    path('strike/<str:user_id>/', views.IssueStrikeView.as_view(), name='issue-strike'),
+    path('strikes/<str:user_id>/', views.StrikeHistoryView.as_view(), name='strike-history'),
     path('queue/', views.ModerationQueueView.as_view(), name='moderation-queue'),
     path('logs/', views.AdminAuditLogView.as_view(), name='admin-logs'),
+    path('public-logs/', views.PublicGovernanceLogView.as_view(), name='public-governance-logs'),
 ]
