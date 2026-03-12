@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 import GlobalEngagement from "@/components/engagement/GlobalEngagement";
 import MobileDock from "@/components/navigation/mobile-dock";
 import SidebarNav from "@/components/navigation/sidebar-nav";
+import MainLayoutWrapper from "@/components/navigation/main-layout-wrapper";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -33,9 +34,9 @@ export default function RootLayout({
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "GOOGLE_CLIENT_ID_PLACEHOLDER"}>
           <QueryProvider>
             <SidebarNav />
-            <div className="md:ml-64">
+            <MainLayoutWrapper>
               {children}
-            </div>
+            </MainLayoutWrapper>
             <MobileDock />
             <GlobalEngagement />
           </QueryProvider>

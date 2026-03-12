@@ -234,7 +234,7 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = [
     origin.strip() for origin in
-    config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000').split(',')
+    config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000,https://void-dmz8.vercel.app').split(',')
     if origin.strip()
 ]
 CORS_ALLOW_CREDENTIALS = True
