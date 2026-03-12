@@ -75,5 +75,14 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         response['X-XSS-Protection'] = '1; mode=block'
         response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
         if not request.path.startswith('/admin/'):
-            response['Content-Security-Policy'] = "default-src 'self'"
+            # Allow Google Identity Services and other necessary origins
+            csp = (
+                "default-src 'self'; "
+                "script-src 'self' https://accounts.google.com https://www.gstatic.com 'unsafe-inline'; "
+                "frame-src 'self' https://accounts.google.com; "
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                "font-src 'self' https://fonts.gstatic.com; "
+                "connect-src 'self' https://accounts.google.com;"
+            )
+            response['Content-Security-Policy'] = csp
         return response
