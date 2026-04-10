@@ -11,8 +11,8 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have a date of birth')
             
         if not extra_fields.get('alias'):
-             import random
-             extra_fields['alias'] = f"anon-{random.randint(1000, 9999)}"
+             import uuid as _uuid
+             extra_fields['alias'] = f"anon-{_uuid.uuid4().hex[:8]}"
 
         user = self.model(
             email=self.normalize_email(email),

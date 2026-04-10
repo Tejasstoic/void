@@ -25,7 +25,11 @@ api.interceptors.request.use((config) => {
         console.log(`API Request [${config.method?.toUpperCase()} ${config.url}]: Token present (${token.substring(0, 10)}...)`);
         config.headers.Authorization = `Bearer ${token}`;
     } else {
-        console.warn(`API Request [${config.method?.toUpperCase()} ${config.url}]: No token found in localStorage`);
+        const publicPaths = ['/register/', '/login/'];
+        const isPublic = publicPaths.some(p => config.url?.includes(p));
+        if (!isPublic) {
+            console.warn(`API Request [${config.method?.toUpperCase()} ${config.url}]: No token found in localStorage`);
+        }
     }
     return config;
 });
