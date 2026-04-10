@@ -66,3 +66,23 @@ class Vote(models.Model):
     class Meta:
         unique_together = ('proposal', 'user')
         ordering = ['-created_at']
+
+
+class Strike(models.Model):
+    """Individual strike record for full audit trail."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='strikes')
+    issued_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='strikes_issued')
+    reason = models.TextField()
+    post = models.ForeignKey('content.Post', on_delete=models.SET_NULL, null=True, blank=True, related_name='strikes')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"Strike on {self.user.alias} - {self.reason[:50]}"
